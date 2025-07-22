@@ -1,0 +1,30 @@
+services:
+  # Backend API Service
+  - type: web
+    name: grok4-backend
+    env: python
+    plan: starter
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn backend:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: XAI_API_KEY
+        sync: false
+      - key: QDRANT_URL
+        sync: false
+      - key: COLLECTION_NAME
+        sync: false
+      - key: EMBED_MODEL
+        value: all-MiniLM-L6-v2
+      - key: TOP_K
+        value: 10
+
+  # Frontend Web Service
+  - type: web
+    name: grok4-frontend
+    env: static
+    plan: starter
+    buildCommand: cd frontend && npm install && npm run build
+    staticPublishPath: frontend/dist
+    envVars:
+      - key: VITE_API_URL
+        value: https://grok4-backend.onrender.com 
